@@ -1,10 +1,11 @@
 from django.urls import path
 
-from .views import base_views, question_views, answer_views
+from .views import base_views, question_views, answer_views, comment_views
 
 app_name = 'pybo'
 
 urlpatterns = [
+
     # base
     path('', base_views.index, name='index'),
     path('<int:question_id>/', base_views.detail, name='detail'),
@@ -20,4 +21,10 @@ urlpatterns = [
     path('answer/modify/<int:answer_id>/', answer_views.answer_modify, name='answer_modify'),
     path('answer/delete/<int:answer_id>/', answer_views.answer_delete, name='answer_delete'),
     path('answer/vote/<int:answer_id>/', answer_views.answer_vote, name='answer_vote'),
-]
+
+    # comment
+    path('comment/create/question/<int:question_id>/', comment_views.comment_create, name='comment_create'),
+    path('comment/modify/question/<int:comment_id>/', comment_views.comment_modify, name='comment_modify'),
+    path('comment/delete/question/<int:comment_id>/', comment_views.comment_delete, name='comment_delete'),
+    
+    ]

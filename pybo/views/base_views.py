@@ -1,13 +1,15 @@
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q,Count
 from django.shortcuts import render, get_object_or_404
 
-from pybo.models import Question
+from common.views import get_client_ip
+from pybo.models import Question,QuestionCount
 
 
 def index(request):
     page = request.GET.get('page', '1')  # 페이지
     kw = request.GET.get('kw', '')  # 검색어
+
     question_list = Question.objects.order_by('-create_date')
     if kw:
         question_list = question_list.filter(
@@ -23,7 +25,21 @@ def index(request):
     return render(request, 'pybo/question_list.html', context)
 
 
+# 자세히 볼 수 있도록 렌더링
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     context = {'question': question}
+    ip=get_client_ip(request)
+    cnt=QuestionCount.objects.filter(ip=ip, question=question)
+    if cnt==0:
+        qc=QuestionCount(ip=ip, question=question)
+        qc.save()
+        if question.view_count:
+            question.view_count+=1
+        else:
+            question.view_count=1
+        question.save()
+
     return render(request, 'pybo/question_detail.html', context)
+
+

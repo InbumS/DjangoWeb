@@ -4,6 +4,7 @@ from common.forms import UserForm
 
 
 def signup(request):
+    # 계정 생성 하는 법
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
@@ -16,3 +17,15 @@ def signup(request):
     else:
         form = UserForm()
     return render(request, 'common/signup.html', {'form': form})
+
+def page_not_found(request, exception):
+    return render(request, 'common/404.html', {})
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
